@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Dict, List, Union
-
-from src.csv_utils.consts import SUCCESS_COLUMN, ARRIVAL_COLUMN, DEPARTURE_COLUMN, CSV_FOLDER, CSV_NAME, CSV_PATH
+from src.csv_utils.consts import SUCCESS_COLUMN, ARRIVAL_COLUMN, DEPARTURE_COLUMN, CSV_PATH
 from src.csv_utils.csv_utils import get_file_line_dicts, write_list_to_csv
 from src.flight_file_process.consts import SUCCESS, FAIL, ARRIVAL_DEPARTURE_GAP_FOR_SUCCESS, MAX_SUCCESS
 from src.flight_file_process.time_utils import get_minutes_from_midnight
@@ -16,13 +15,13 @@ def handle_file_path(file_path: Path, csv_list: Union[None, List[Dict]]=None) ->
     if csv_list is None:
         with file_path.open() as file:
             csv_list = get_file_line_dicts(file)
-    csv_list = _add_success_column_in_memory(csv_list)
+    csv_list = _add_success_column(csv_list)
     with file_path.open('w') as file:
         write_list_to_csv(csv_list, file)
     return csv_list
 
 
-def _add_success_column_in_memory(file_dict: List[Dict]) -> List[Dict]:
+def _add_success_column(file_dict: List[Dict]) -> List[Dict]:
     num_success = 0
     for flight in file_dict:
         arrival = get_minutes_from_midnight(flight[ARRIVAL_COLUMN])

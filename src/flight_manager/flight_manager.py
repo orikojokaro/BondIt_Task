@@ -1,13 +1,11 @@
-import json
 from typing import List, Dict, Union
 
 from flask import Flask, request
 
-from src.csv_utils.consts import CSV_PATH, FLIGHT_ID_COLUMN, ARRIVAL_COLUMN, DEPARTURE_COLUMN, SUCCESS_COLUMN
+from src.csv_utils.consts import CSV_PATH, FLIGHT_ID_COLUMN, EMPTY_CSV_ROW
 from src.flight_file_process.process import handle_file_path
 
 app = Flask(__name__)
-# TODO consider re-reading every time instead of global var, e.g. to allow easy recovery if one update call fails in the middle
 csv_list: List[Dict] = handle_file_path(CSV_PATH)
 
 
@@ -26,9 +24,9 @@ def update_flights():
 
 def _get_flight_info(flight_id: str) -> Dict[str, Union[str, None]]:
     """
-    :return: A dict flight ifno, if flight_Id not found, values will be set to None
+    :return: A dict flight info, if flight_Id not found values will be set to None
     """
-    result_flight = {FLIGHT_ID_COLUMN: None, ARRIVAL_COLUMN: None, DEPARTURE_COLUMN: None, SUCCESS_COLUMN: None}
+    result_flight = EMPTY_CSV_ROW
     for flight in csv_list:
         if flight[FLIGHT_ID_COLUMN] == flight_id:
             result_flight = flight
